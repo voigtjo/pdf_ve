@@ -1,0 +1,39 @@
+body { height: 100vh; display: flex; flex-direction: column; }
+
+header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 16px; background: var(--panel); border-bottom: 1px solid var(--border);
+}
+.spacer { flex: 1; }
+.center { text-align: center; max-width: 480px; margin: 64px auto; padding: 0 16px; }
+
+main { flex: 1; display: flex; min-height: 0; }
+aside {
+  width: 300px; flex-shrink: 0; overflow-y: auto; padding: 16px;
+  background: var(--panel); border-right: 1px solid var(--border);
+}
+.aside-head { display: flex; align-items: center; justify-content: space-between; }
+.aside-head h2 { font-size: 16px; margin: 0; }
+.upload { margin: 12px 0; width: 100%; text-align: center; background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+
+#files { list-style: none; margin: 0; padding: 0; }
+#files li button {
+  width: 100%; text-align: left; border: none; border-radius: 6px; padding: 8px; background: none;
+  display: flex; flex-direction: column; gap: 2px;
+}
+#files li button:hover, #files li button.active { background: var(--bg); }
+#files .meta { font-size: 12px; color: var(--muted); }
+
+#viewer-pane { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+#doc-bar {
+  display: flex; align-items: center; gap: 12px; padding: 8px 16px;
+  border-bottom: 1px solid var(--border); background: var(--panel);
+}
+#pages { flex: 1; overflow: auto; padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+canvas.page { background: #fff; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25); max-width: 100%; height: auto !important; }
+
+#toast {
+  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+  background: var(--text); color: var(--bg); padding: 10px 16px; border-radius: 8px; max-width: 80vw;
+}
+#toast.error { background: var(--error); color: #fff; }

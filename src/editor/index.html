@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>pdf_ve – Editor</title>
+    <link rel="stylesheet" href="../styles.css" />
+    <link rel="stylesheet" href="./editor.css" />
+  </head>
+  <body>
+    <header>
+      <strong>pdf_ve</strong>
+      <span id="account" class="muted"></span>
+      <span class="spacer"></span>
+      <a id="link-in" class="button" target="_blank" rel="noopener" hidden>In in Drive</a>
+      <a id="link-out" class="button" target="_blank" rel="noopener" hidden>Out in Drive</a>
+      <button id="signout" hidden>Abmelden</button>
+    </header>
+
+    <section id="signin-view" class="center" hidden>
+      <h1>Willkommen bei pdf_ve</h1>
+      <p class="muted">
+        Melde dich mit Google an. Die Erweiterung legt in deinem Drive den Ordner
+        <b>pdf_ve</b> mit den Unterordnern <b>In</b> und <b>Out</b> an.
+      </p>
+      <button id="signin" class="primary">Mit Google anmelden</button>
+    </section>
+
+    <main id="main-view" hidden>
+      <aside>
+        <div class="aside-head">
+          <h2>In</h2>
+          <button id="refresh" title="Liste neu laden">Neu laden</button>
+        </div>
+        <label class="button primary upload">
+          PDF hochladen
+          <input id="upload" type="file" accept="application/pdf,.pdf" multiple hidden />
+        </label>
+        <ul id="files"></ul>
+        <p id="files-empty" class="muted" hidden>Noch keine PDFs in In.</p>
+      </aside>
+      <section id="viewer-pane">
+        <div id="doc-bar" hidden>
+          <span id="doc-name"></span>
+          <span id="doc-pages" class="muted"></span>
+          <span class="spacer"></span>
+          <button id="save-copy" class="primary">Kopie nach Out speichern</button>
+        </div>
+        <div id="pages"><p class="muted center">Wähle links eine Datei aus.</p></div>
+      </section>
+    </main>
+
+    <div id="toast" role="status" hidden></div>
+    <script type="module" src="./editor.ts"></script>
+  </body>
+</html>

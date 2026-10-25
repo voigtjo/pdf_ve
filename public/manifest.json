@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "pdf_ve – PDF-Viewer und -Editor",
+  "short_name": "pdf_ve",
+  "version": "0.1.0",
+  "description": "PDFs aus Google Drive anzeigen, bearbeiten und Formulare ausfüllen. Ablage in pdf_ve/In und pdf_ve/Out.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtn1jz6+RM1cIUoABC5OzZ+RJUwhyHdgKVv0MHHS8O5ruJSf1au8PpBY53HFm0cxLtW/YvEcDA5s1qg6fNZi4pU1l8n/C2HAAOulwOCDwj1eZG+vznYdes43Mp66cWMNctGFdRH/6J8YyW0J0PZEV5XmaOl5+qBx0nvXojNyJickYc18hRDRytex9rWzvYQqBm/owWdA7R2yKpsCsA6we+tjr6gctOp6Esyy2NgWHVr5f7I2zCjuc+zriyea6JhsoIR2FOX5KQSf9loRuhqp4gX3FNRy567HbOtT7X8acRTjEboDkj3L8xcTB9j9LbW07+Iu4iVRMeW/lUY2eFB8V2QIDAQAB",
+  "action": {
+    "default_title": "pdf_ve",
+    "default_popup": "popup/index.html"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "permissions": [
+    "identity",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://www.googleapis.com/*"
+  ],
+  "oauth2": {
+    "client_id": "HIER_DIE_CLIENT_ID_EINTRAGEN.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/drive"
+    ]
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  }
+}
