@@ -10,6 +10,9 @@ import 'pdfjs-dist/web/pdf_viewer.css';
 
 pdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
 
+// Liegen beim Bauen unter dist/pdfjs/ (siehe vite.config.ts).
+const assets = (dir: string) => chrome.runtime.getURL(`pdfjs/${dir}/`);
+
 export interface OpenedPdf {
   pages: number;
   hasForm: boolean;
@@ -40,7 +43,13 @@ export class PdfView {
   async open(data: Uint8Array): Promise<OpenedPdf> {
     await this.close();
     // pdf.js übernimmt den Puffer; eine Kopie lässt das Original intakt.
-    this.task = pdfjs.getDocument({ data: data.slice() });
+    this.task = pdfjs.getDocument({
+      data: data.slice(),
+      wasmUrl: assets('wasm'),
+      cMapUrl: assets('cmaps'),
+      standardFontDataUrl: assets('standard_fonts'),
+      iccUrl: assets('iccs'),
+    });
     const doc = await this.task.promise;
     this.doc = doc;
     this.viewer.setDocument(doc);

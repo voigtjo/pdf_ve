@@ -1,8 +1,24 @@
+import { cpSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 
 const here = dirname(fileURLToPath(import.meta.url));
+
+// pdf.js lädt Bild-Decoder (WebAssembly), Schriften und CMaps zur Laufzeit nach.
+// Manifest V3 verbietet Code aus dem Netz, daher kommen sie mit in dist/pdfjs/.
+function copyPdfjsAssets(): Plugin {
+  return {
+    name: 'copy-pdfjs-assets',
+    closeBundle() {
+      for (const dir of ['wasm', 'cmaps', 'standard_fonts', 'iccs']) {
+        cpSync(resolve(here, 'node_modules/pdfjs-dist', dir), resolve(here, 'dist/pdfjs', dir), {
+          recursive: true,
+        });
+      }
+    },
+  };
+}
 
 // Baut die Erweiterung nach dist/. Die HTML-Seiten liegen unter src/,
 // das Manifest kommt unverändert aus public/.
@@ -10,6 +26,7 @@ export default defineConfig({
   root: resolve(here, 'src'),
   publicDir: resolve(here, 'public'),
   base: '',
+  plugins: [copyPdfjsAssets()],
   build: {
     outDir: resolve(here, 'dist'),
     emptyOutDir: true,
