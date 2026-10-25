@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>pdf_ve – Editor</title>
+    <link rel="stylesheet" href="../styles.css" />
+    <link rel="stylesheet" href="./editor.css" />
+  </head>
+  <body>
+    <header>
+      <strong>pdf_ve</strong>
+      <span id="version" class="muted"></span>
+      <span id="account" class="muted"></span>
+      <span class="spacer"></span>
+      <a id="link-in" class="button" target="_blank" rel="noopener" hidden>In in Drive</a>
+      <a id="link-out" class="button" target="_blank" rel="noopener" hidden>Out in Drive</a>
+      <button id="signout" hidden>Abmelden</button>
+    </header>
+
+    <section id="signin-view" class="center" hidden>
+      <h1>Willkommen bei pdf_ve</h1>
+      <p class="muted">
+        Melde dich mit Google an. Die Erweiterung legt in deinem Drive den Ordner
+        <b>pdf_ve</b> mit den Unterordnern <b>In</b> und <b>Out</b> an.
+      </p>
+      <button id="signin" class="primary">Mit Google anmelden</button>
+    </section>
+
+    <main id="main-view" hidden>
+      <aside>
+        <div class="tabs" role="tablist">
+          <button id="tab-in" class="tab active" role="tab">In</button>
+          <button id="tab-out" class="tab" role="tab">Out</button>
+          <span class="spacer"></span>
+          <button id="refresh" title="Liste neu laden">Neu laden</button>
+        </div>
+        <label id="upload-label" class="button primary upload">
+          PDF hochladen
+          <input id="upload" type="file" accept="application/pdf,.pdf" multiple hidden />
+        </label>
+        <ul id="files"></ul>
+        <p id="files-empty" class="muted" hidden></p>
+      </aside>
+
+      <section id="pages-pane" hidden>
+        <div class="pages-tools">
+          <button id="insert-blank" title="Leere Seite hinter der markierten Seite einfügen">+ Leere Seite</button>
+          <button id="insert-pdf" title="Seiten aus einem anderen PDF hinter der markierten Seite einfügen">+ PDF einfügen</button>
+          <button id="undo" title="Letzten Schritt rückgängig machen" disabled>Rückgängig</button>
+        </div>
+        <p class="muted small">Seiten per Ziehen verschieben</p>
+        <ol id="thumbs"></ol>
+      </section>
+
+      <section id="viewer-pane">
+        <div id="doc-bar" hidden>
+          <span id="doc-name"></span>
+          <span id="doc-pages" class="muted"></span>
+          <span id="doc-dirty" class="dirty" hidden>geändert</span>
+          <span class="spacer"></span>
+          <button id="save" class="primary">Nach Out speichern</button>
+        </div>
+        <p id="form-hint" class="hint" hidden>Dieses PDF ist ein Formular: Felder direkt anklicken und ausfüllen, dann nach Out speichern.</p>
+        <div id="viewer-wrap">
+          <p id="placeholder" class="muted center">Wähle links eine Datei aus.</p>
+          <div id="viewer-container"><div class="pdfViewer"></div></div>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="insert-dialog">
+      <h2>PDF einfügen</h2>
+      <p class="muted">Die Seiten werden hinter Seite <span id="insert-after"></span> eingefügt.</p>
+      <ul id="insert-files"></ul>
+      <div class="dialog-actions">
+        <label class="button">
+          Vom Computer wählen …
+          <input id="insert-local" type="file" accept="application/pdf,.pdf" hidden />
+        </label>
+        <span class="spacer"></span>
+        <button id="insert-cancel">Abbrechen</button>
+      </div>
+    </dialog>
+
+    <div id="toast" role="status" hidden></div>
+    <script type="module" src="./editor.ts"></script>
+  </body>
+</html>

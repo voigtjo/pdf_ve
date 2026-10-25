@@ -1,0 +1,21 @@
+{
+  "name": "pdf_ve",
+  "version": "0.2.0",
+  "private": true,
+  "description": "PDF-Viewer und -Editor als Chrome-Erweiterung mit Google-Drive-Ablage",
+  "type": "module",
+  "scripts": {
+    "dev": "vite build --watch --mode development",
+    "build": "tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.3.6",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.5"
+  },
+  "dependencies": {
+    "@cantoo/pdf-lib": "^2.11.1",
+    "pdfjs-dist": "^6.4.299"
+  }
+}

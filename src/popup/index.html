@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <title>pdf_ve</title>
+    <link rel="stylesheet" href="../styles.css" />
+    <style>
+      body { width: 280px; padding: 16px; display: grid; gap: 12px; }
+      h1 { font-size: 16px; margin: 0; }
+      .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    </style>
+  </head>
+  <body>
+    <h1>pdf_ve</h1>
+    <p id="status" class="muted">Prüfe Anmeldung …</p>
+    <div class="actions">
+      <button id="signin" class="primary" hidden>Mit Google anmelden</button>
+      <button id="open" class="primary">Editor öffnen</button>
+      <button id="signout" hidden>Abmelden</button>
+    </div>
+    <p id="error" class="error" hidden></p>
+    <script type="module" src="./popup.ts"></script>
+  </body>
+</html>
