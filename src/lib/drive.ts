@@ -97,6 +97,11 @@ async function isLiveFolder(id: string): Promise<boolean> {
  * Die IDs werden gemerkt, damit ein Umbenennen in Drive nichts kaputt macht.
  */
 export async function ensureFolders(): Promise<Folders> {
+  // Mehrere offene Editor-Tabs dürfen die Ordner nicht doppelt anlegen.
+  return navigator.locks.request('pdfve-folders', findOrCreateFolders);
+}
+
+async function findOrCreateFolders(): Promise<Folders> {
   const stored = (await chrome.storage.local.get(STORAGE_KEY))[STORAGE_KEY] as Folders | undefined;
   if (stored) {
     const live = await Promise.all([stored.root, stored.in, stored.out].map(isLiveFolder));
@@ -153,4 +158,13 @@ export async function uploadPdf(folderId: string, name: string, data: Uint8Array
 
 export function folderUrl(folderId: string): string {
   return `https://drive.google.com/drive/folders/${folderId}`;
+}
+
+/** Verschiebt eine Datei in den Papierkorb von Google Drive (dort 30 Tage wiederherstellbar). */
+export async function trashFile(fileId: string): Promise<void> {
+  await driveFetch(`${API}/files/${fileId}?fields=id`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ trashed: true }),
+  });
 }

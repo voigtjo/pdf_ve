@@ -9,15 +9,12 @@ Die gesamte PDF-Verarbeitung passiert lokal im Browser, es gibt keinen eigenen S
 
 ## Stand
 
-Phase 0 (Grundgerüst):
-
 - Google-Anmeldung über `chrome.identity`
 - Ordner `pdf_ve/In` und `pdf_ve/Out` anlegen bzw. wiederfinden
-- PDFs nach In hochladen, Liste von In anzeigen (auch Dateien, die direkt im Drive abgelegt wurden)
-- PDF anzeigen (pdf.js)
-- Testweise eine Kopie nach Out speichern (pdf-lib), Name z. B. `Vertrag_bearbeitet_2026-10-25.pdf`
-
-Als Nächstes (Phase 1): Seiten löschen, drehen, umsortieren, einfügen; PDFs zusammenführen und teilen; Formulare ausfüllen.
+- Listen von In und Out (auch Dateien, die direkt im Drive abgelegt wurden), Hochladen nach In, Löschen in den Drive-Papierkorb
+- PDF anzeigen (pdf.js), Formulare ausfüllen – auch bei PDFs mit Besitzerpasswort
+- Seiten löschen, drehen, per Ziehen verschieben, leere Seite oder ein anderes PDF einfügen (= zusammenführen), Rückgängig
+- Speichern nach Out: `<Name>_ausgefuellt_<Datum>.pdf` bei ausgefüllten Formularen, sonst `<Name>_bearbeitet_<Datum>.pdf`
 
 ## Einrichten
 
@@ -41,10 +38,11 @@ Die Erweiterungs-ID ist durch den `key` im Manifest fest: `kneiagljaijhkhalnhbma
 | `public/manifest.json` | Manifest V3, Berechtigungen, OAuth-Client |
 | `src/background.ts` | Service Worker, öffnet nach der Installation den Editor |
 | `src/popup/` | Popup: Anmelden, Editor öffnen, Abmelden |
-| `src/editor/` | Editor-Tab: Dateiliste von In, Anzeige, Speichern nach Out |
+| `src/editor/` | Editor-Tab: Dateilisten In/Out, Anzeige, Seitenleiste, Speichern nach Out |
 | `src/lib/auth.ts` | Google-Token holen und verwerfen |
 | `src/lib/drive.ts` | Drive REST API v3: Ordner, Liste, Up- und Download |
-| `src/lib/viewer.ts` | Anzeige mit pdf.js |
+| `src/lib/viewer.ts` | Anzeige und Formulare mit pdf.js |
+| `src/lib/pages.ts` | Seitenbearbeitung mit pdf-lib (`@cantoo/pdf-lib`) |
 | `src/lib/naming.ts` | Dateinamen für Ergebnisse in Out |
 
 ## Berechtigungen
