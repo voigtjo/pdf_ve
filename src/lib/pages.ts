@@ -2,7 +2,16 @@
 // PDFs entschlüsseln kann). Jede Funktion nimmt die PDF-Bytes und liefert neue
 // Bytes zurück; das Original bleibt unverändert, was ein einfaches Rückgängig erlaubt.
 
-import { degrees, PDFDict, PDFDocument, PDFName, PDFRef, type PDFPage } from '@cantoo/pdf-lib';
+import {
+  degrees,
+  PDFDict,
+  PDFDocument,
+  PDFInvalidObject,
+  PDFName,
+  PDFRef,
+  PDFStream,
+  type PDFPage,
+} from '@cantoo/pdf-lib';
 
 async function load(bytes: Uint8Array): Promise<PDFDocument> {
   // Leeres Passwort öffnet PDFs, die nur ein Besitzerpasswort haben (z. B. Bankformulare).
@@ -11,8 +20,33 @@ async function load(bytes: Uint8Array): Promise<PDFDocument> {
 
 async function edit(bytes: Uint8Array, change: (doc: PDFDocument) => void | Promise<void>): Promise<Uint8Array> {
   const doc = await load(bytes);
+  dropOldXrefStreams(doc);
   await change(doc);
   return doc.save();
+}
+
+/**
+ * pdf-lib übernimmt alte Querverweis-Streams als gewöhnliche Objekte. Bei
+ * verschlüsselten PDFs steht darin noch /Encrypt, und beim nächsten Laden hielt
+ * pdf-lib die längst entschlüsselte Datei wieder für verschlüsselt
+ * („NEEDS PASSWORD“). Die Streams werden beim Speichern ohnehin neu erzeugt.
+ */
+function dropOldXrefStreams(doc: PDFDocument): void {
+  const xref = PDFName.of('XRef');
+  const marker = '/XRef';
+  for (const [ref, obj] of doc.context.enumerateIndirectObjects()) {
+    const isXref =
+      (obj instanceof PDFStream && obj.dict.get(PDFName.of('Type')) === xref) ||
+      // Bei verschlüsselten Dateien kann pdf-lib den Stream nicht lesen und hält ihn nur roh.
+      (obj instanceof PDFInvalidObject && rawText(obj).includes(marker));
+    if (isXref) doc.context.delete(ref);
+  }
+}
+
+function rawText(obj: PDFInvalidObject): string {
+  const bytes = new Uint8Array(obj.sizeInBytes());
+  obj.copyBytesInto(bytes, 0);
+  return String.fromCharCode(...bytes.subarray(0, 400));
 }
 
 /** Löscht die Seite `index` (0-basiert). */
