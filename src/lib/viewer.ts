@@ -49,6 +49,9 @@ export class PdfView {
     // pdf.js übernimmt den Puffer; eine Kopie lässt das Original intakt.
     this.task = pdfjs.getDocument({
       data: data.slice(),
+      // Nur echte Fehler melden; Hinweise wie „Unimplemented border style“ landen
+      // sonst als Fehler in chrome://extensions.
+      verbosity: pdfjs.VerbosityLevel.ERRORS,
       wasmUrl: assets('wasm'),
       cMapUrl: assets('cmaps'),
       standardFontDataUrl: assets('standard_fonts'),

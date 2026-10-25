@@ -445,4 +445,6 @@ window.addEventListener('beforeunload', (e) => {
   if (isDirty()) e.preventDefault();
 });
 
+$('version').textContent = `v${chrome.runtime.getManifest().version}`;
+
 start().catch(handleError);

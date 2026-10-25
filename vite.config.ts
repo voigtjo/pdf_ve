@@ -1,9 +1,23 @@
-import { cpSync } from 'node:fs';
+import { cpSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig, type Plugin } from 'vite';
 
 const here = dirname(fileURLToPath(import.meta.url));
+
+// Die Versionsnummer steht nur in package.json und wird beim Bauen ins Manifest übernommen.
+function syncManifestVersion(): Plugin {
+  return {
+    name: 'sync-manifest-version',
+    closeBundle() {
+      const { version } = JSON.parse(readFileSync(resolve(here, 'package.json'), 'utf8'));
+      const path = resolve(here, 'dist/manifest.json');
+      const manifest = JSON.parse(readFileSync(path, 'utf8'));
+      manifest.version = version;
+      writeFileSync(path, JSON.stringify(manifest, null, 2) + '\n');
+    },
+  };
+}
 
 // pdf.js lädt Bild-Decoder (WebAssembly), Schriften und CMaps zur Laufzeit nach.
 // Manifest V3 verbietet Code aus dem Netz, daher kommen sie mit in dist/pdfjs/.
@@ -26,7 +40,7 @@ export default defineConfig({
   root: resolve(here, 'src'),
   publicDir: resolve(here, 'public'),
   base: '',
-  plugins: [copyPdfjsAssets()],
+  plugins: [copyPdfjsAssets(), syncManifestVersion()],
   build: {
     outDir: resolve(here, 'dist'),
     emptyOutDir: true,
