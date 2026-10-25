@@ -1,4 +1,3 @@
-import { PDFDocument } from 'pdf-lib';
 import { getToken, signOut } from '../lib/auth';
 import {
   downloadFile,
@@ -11,7 +10,7 @@ import {
   type Folders,
 } from '../lib/drive';
 import { outputName } from '../lib/naming';
-import { renderPdf } from '../lib/viewer';
+import { PdfView } from '../lib/viewer';
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 
@@ -20,18 +19,21 @@ const mainView = $('main-view');
 const account = $('account');
 const fileList = $<HTMLUListElement>('files');
 const filesEmpty = $('files-empty');
-const pages = $('pages');
+const placeholder = $('placeholder');
+const formHint = $('form-hint');
 const docBar = $('doc-bar');
 const docName = $('doc-name');
 const docPages = $('doc-pages');
-const saveCopyBtn = $<HTMLButtonElement>('save-copy');
+const saveBtn = $<HTMLButtonElement>('save');
 const linkIn = $<HTMLAnchorElement>('link-in');
 const linkOut = $<HTMLAnchorElement>('link-out');
 const signoutBtn = $<HTMLButtonElement>('signout');
 const toast = $('toast');
 
+const view = new PdfView($<HTMLDivElement>('viewer-container'));
+
 let folders: Folders | null = null;
-let current: { file: DriveFile; data: Uint8Array } | null = null;
+let current: { file: DriveFile; hasForm: boolean } | null = null;
 let toastTimer: number | undefined;
 
 function notify(message: string, isError = false): void {
@@ -108,30 +110,35 @@ function describe(file: DriveFile): string {
 }
 
 async function openFile(file: DriveFile): Promise<void> {
+  if (current && view.modified && !confirm('Ungespeicherte Eingaben verwerfen?')) return;
   for (const btn of fileList.querySelectorAll('button')) {
     btn.classList.toggle('active', btn.dataset.id === file.id);
   }
-  pages.replaceChildren(Object.assign(document.createElement('p'), { className: 'muted', textContent: 'Lade …' }));
+  current = null;
+  docBar.hidden = formHint.hidden = true;
+  placeholder.hidden = false;
+  placeholder.textContent = 'Lade …';
   const data = await downloadFile(file.id);
-  current = { file, data };
+  const opened = await view.open(data);
+  current = { file, hasForm: opened.hasForm };
+  placeholder.hidden = true;
   docName.textContent = file.name;
+  docPages.textContent = opened.pages === 1 ? '1 Seite' : `${opened.pages} Seiten`;
   docBar.hidden = false;
-  const count = await renderPdf(data, pages);
-  docPages.textContent = count === 1 ? '1 Seite' : `${count} Seiten`;
+  formHint.hidden = !opened.hasForm;
 }
 
-async function saveCopy(): Promise<void> {
+async function save(): Promise<void> {
   if (!current || !folders) return;
-  saveCopyBtn.disabled = true;
+  saveBtn.disabled = true;
   try {
-    // Laden und neu schreiben mit pdf-lib: Grundlage für alle späteren Bearbeitungen.
-    const doc = await PDFDocument.load(current.data, { ignoreEncryption: false });
-    const bytes = await doc.save();
-    const name = outputName(current.file.name);
+    const filled = current.hasForm && view.modified;
+    const bytes = await view.save();
+    const name = outputName(current.file.name, filled ? 'ausgefuellt' : 'bearbeitet');
     await uploadPdf(folders.out, name, bytes);
     notify(`Gespeichert in Out: ${name}`);
   } finally {
-    saveCopyBtn.disabled = false;
+    saveBtn.disabled = false;
   }
 }
 
@@ -151,10 +158,14 @@ $('signin').addEventListener('click', () => {
 signoutBtn.addEventListener('click', () => {
   current = null;
   folders = null;
+  void view.close();
+  docBar.hidden = formHint.hidden = true;
+  placeholder.hidden = false;
+  placeholder.textContent = 'Wähle links eine Datei aus.';
   signOut().then(showSignIn).catch(handleError);
 });
 $('refresh').addEventListener('click', () => refreshList().catch(handleError));
-saveCopyBtn.addEventListener('click', () => saveCopy().catch(handleError));
+saveBtn.addEventListener('click', () => save().catch(handleError));
 $<HTMLInputElement>('upload').addEventListener('change', (event) => {
   const input = event.target as HTMLInputElement;
   if (input.files?.length) uploadFiles(input.files).catch(handleError).finally(() => (input.value = ''));

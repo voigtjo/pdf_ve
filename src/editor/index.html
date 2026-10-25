@@ -44,9 +44,13 @@
           <span id="doc-name"></span>
           <span id="doc-pages" class="muted"></span>
           <span class="spacer"></span>
-          <button id="save-copy" class="primary">Kopie nach Out speichern</button>
+          <button id="save" class="primary">Nach Out speichern</button>
         </div>
-        <div id="pages"><p class="muted center">Wähle links eine Datei aus.</p></div>
+        <p id="form-hint" class="hint" hidden>Dieses PDF ist ein Formular: Felder direkt anklicken und ausfüllen, dann nach Out speichern.</p>
+        <div id="viewer-wrap">
+          <p id="placeholder" class="muted center">Wähle links eine Datei aus.</p>
+          <div id="viewer-container"><div class="pdfViewer"></div></div>
+        </div>
       </section>
     </main>
 
