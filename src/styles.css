@@ -26,6 +26,9 @@
 }
 
 * { box-sizing: border-box; }
+/* pdf.js rechnet mit der Standard-Box (content-box); sonst verrutschen die
+   Formularfelder gegenüber der gezeichneten Seite. */
+.pdfViewer, .pdfViewer * { box-sizing: content-box; }
 body { margin: 0; background: var(--bg); }
 
 button, .button {
