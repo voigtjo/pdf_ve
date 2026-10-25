@@ -21,7 +21,7 @@ Als Nächstes (Phase 1): Seiten löschen, drehen, umsortieren, einfügen; PDFs z
 
 ## Einrichten
 
-1. Google-Cloud-Projekt und OAuth-Client anlegen: siehe [docs/google-cloud-setup.md](docs/google-cloud-setup.md). Die Client-ID kommt in `public/manifest.json` unter `oauth2.client_id`.
+1. Google-Cloud-Projekt und OAuth-Client anlegen: siehe [docs/google-cloud-setup.md](docs/google-cloud-setup.md). Die Client-ID steht bereits in `public/manifest.json` unter `oauth2.client_id`.
 2. Bauen (Node.js 20.19 oder neuer):
    ```sh
    npm install

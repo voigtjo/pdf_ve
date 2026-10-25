@@ -21,7 +21,7 @@
     "https://www.googleapis.com/*"
   ],
   "oauth2": {
-    "client_id": "HIER_DIE_CLIENT_ID_EINTRAGEN.apps.googleusercontent.com",
+    "client_id": "51392038975-d9etd0rmblqek2reqp31cusslmjdrol3.apps.googleusercontent.com",
     "scopes": [
       "https://www.googleapis.com/auth/drive"
     ]
